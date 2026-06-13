@@ -11,5 +11,7 @@ namespace SeguimientoConstruccion.API.Data
 
         public DbSet<Tarea> Tareas { get; set; }
 
+        public DbSet<Material> Materiales { get; set; }
+
     }
 }
