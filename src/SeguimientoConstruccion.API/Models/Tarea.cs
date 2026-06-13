@@ -10,5 +10,7 @@
 
         public int ObraId { get; set; }
         public Obra? Obra { get; set; }
+
+        public List<Material> Materiales { get; set; } = new List<Material>();
     }
 }
