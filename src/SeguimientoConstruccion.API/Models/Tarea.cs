@@ -12,5 +12,8 @@
         public Obra? Obra { get; set; }
 
         public List<Material> Materiales { get; set; } = new List<Material>();
+
+        public int ResponsableId { get; set; }
+        public Responsable? Responsable { get; set; }
     }
 }
