@@ -8,5 +8,8 @@
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFinEstimada { get; set; }
         public string Estado { get; set; } = string.Empty;
+
+        public List<Tarea> Tareas { get; set; } = new List<Tarea>();
     }
+
 }

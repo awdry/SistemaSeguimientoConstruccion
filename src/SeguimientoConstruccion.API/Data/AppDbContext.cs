@@ -9,5 +9,7 @@ namespace SeguimientoConstruccion.API.Data
 
         public DbSet<Obra> Obras { get; set; }
 
+        public DbSet<Tarea> Tareas { get; set; }
+
     }
 }
