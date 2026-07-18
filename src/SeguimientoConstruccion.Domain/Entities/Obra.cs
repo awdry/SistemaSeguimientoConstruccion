@@ -1,8 +1,8 @@
-﻿namespace SeguimientoConstruccion.API.Models
+﻿using SeguimientoConstruccion.Domain.Core;
+namespace SeguimientoConstruccion.Domain.Entities
 {
-    public class Obra
+    public class Obra : BaseEntity
     {
-        public int Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
         public string Ubicacion { get; set; } = string.Empty;
         public DateTime FechaInicio { get; set; }

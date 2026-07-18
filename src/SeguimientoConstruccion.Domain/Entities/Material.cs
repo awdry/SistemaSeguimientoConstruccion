@@ -1,8 +1,8 @@
-﻿namespace SeguimientoConstruccion.API.Models
+﻿using SeguimientoConstruccion.Domain.Core;
+namespace SeguimientoConstruccion.Domain.Entities
 {
-    public class Material
+    public class Material : BaseEntity
     {
-        public int Id { get; set; }
         public string ?Nombre { get; set; }
         public string UnidadMedida { get; set; } = string.Empty;
         public decimal CostoUnitario { get; set; }

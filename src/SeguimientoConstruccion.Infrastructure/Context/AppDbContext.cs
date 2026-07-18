@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SeguimientoConstruccion.API.Models;
+using SeguimientoConstruccion.Domain.Entities;
 
-namespace SeguimientoConstruccion.API.Data
+namespace SeguimientoConstruccion.Infrastructure.Context
 {
     public class AppDbContext : DbContext
     {

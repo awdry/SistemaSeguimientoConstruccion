@@ -3,21 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SeguimientoConstruccion.Domain.Entities;
 using SeguimientoConstruccion.Infrastructure.Context;
 
 #nullable disable
 
-namespace SeguimientoConstruccion.API.Migrations
+namespace SeguimientoConstruccion.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260613040633_AgregarMaterial")]
-    partial class AgregarMaterial
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,7 +22,7 @@ namespace SeguimientoConstruccion.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SeguimientoConstruccion.API.Models.Material", b =>
+            modelBuilder.Entity("SeguimientoConstruccion.Domain.Entities.Material", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -57,7 +53,7 @@ namespace SeguimientoConstruccion.API.Migrations
                     b.ToTable("Materiales");
                 });
 
-            modelBuilder.Entity("SeguimientoConstruccion.API.Models.Obra", b =>
+            modelBuilder.Entity("SeguimientoConstruccion.Domain.Entities.Obra", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,7 +84,32 @@ namespace SeguimientoConstruccion.API.Migrations
                     b.ToTable("Obras");
                 });
 
-            modelBuilder.Entity("SeguimientoConstruccion.API.Models.Tarea", b =>
+            modelBuilder.Entity("SeguimientoConstruccion.Domain.Entities.Responsable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contacto")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Rol")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Responsables");
+                });
+
+            modelBuilder.Entity("SeguimientoConstruccion.Domain.Entities.Tarea", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -112,16 +133,21 @@ namespace SeguimientoConstruccion.API.Migrations
                     b.Property<double>("PorcentajeAvance")
                         .HasColumnType("float");
 
+                    b.Property<int>("ResponsableId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ObraId");
 
+                    b.HasIndex("ResponsableId");
+
                     b.ToTable("Tareas");
                 });
 
-            modelBuilder.Entity("SeguimientoConstruccion.API.Models.Material", b =>
+            modelBuilder.Entity("SeguimientoConstruccion.Domain.Entities.Material", b =>
                 {
-                    b.HasOne("SeguimientoConstruccion.API.Models.Tarea", "Tarea")
+                    b.HasOne("SeguimientoConstruccion.Domain.Entities.Tarea", "Tarea")
                         .WithMany("Materiales")
                         .HasForeignKey("TareaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -130,23 +156,36 @@ namespace SeguimientoConstruccion.API.Migrations
                     b.Navigation("Tarea");
                 });
 
-            modelBuilder.Entity("SeguimientoConstruccion.API.Models.Tarea", b =>
+            modelBuilder.Entity("SeguimientoConstruccion.Domain.Entities.Tarea", b =>
                 {
-                    b.HasOne("SeguimientoConstruccion.API.Models.Obra", "Obra")
+                    b.HasOne("SeguimientoConstruccion.Domain.Entities.Obra", "Obra")
                         .WithMany("Tareas")
                         .HasForeignKey("ObraId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SeguimientoConstruccion.Domain.Entities.Responsable", "Responsable")
+                        .WithMany("Tareas")
+                        .HasForeignKey("ResponsableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Obra");
+
+                    b.Navigation("Responsable");
                 });
 
-            modelBuilder.Entity("SeguimientoConstruccion.API.Models.Obra", b =>
+            modelBuilder.Entity("SeguimientoConstruccion.Domain.Entities.Obra", b =>
                 {
                     b.Navigation("Tareas");
                 });
 
-            modelBuilder.Entity("SeguimientoConstruccion.API.Models.Tarea", b =>
+            modelBuilder.Entity("SeguimientoConstruccion.Domain.Entities.Responsable", b =>
+                {
+                    b.Navigation("Tareas");
+                });
+
+            modelBuilder.Entity("SeguimientoConstruccion.Domain.Entities.Tarea", b =>
                 {
                     b.Navigation("Materiales");
                 });
