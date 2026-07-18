@@ -1,8 +1,8 @@
-﻿namespace SeguimientoConstruccion.API.Models
+﻿using SeguimientoConstruccion.Domain.Core;
+namespace SeguimientoConstruccion.Domain.Entities
 {
-    public class Tarea
+    public class Tarea : BaseEntity
     {
-        public int Id { get; set; }
         public string Descripcion { get; set; } = string.Empty;
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }

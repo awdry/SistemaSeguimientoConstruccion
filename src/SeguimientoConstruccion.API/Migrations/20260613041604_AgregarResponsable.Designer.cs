@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SeguimientoConstruccion.API.Data;
+using SeguimientoConstruccion.Domain.Entities;
+using SeguimientoConstruccion.Infrastructure.Context;
 
 #nullable disable
 

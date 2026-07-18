@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SeguimientoConstruccion.API.Data;
 using SeguimientoConstruccion.API.DTOs;
-using SeguimientoConstruccion.API.Models;
+using SeguimientoConstruccion.Domain.Entities;
+using SeguimientoConstruccion.Infrastructure.Context;
 
 namespace SeguimientoConstruccion.API.Controllers
 {
