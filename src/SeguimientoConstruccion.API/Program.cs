@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SeguimientoConstruccion.Application.Services;
 using SeguimientoConstruccion.Infrastructure.Context;
 using SeguimientoConstruccion.Infrastructure.Repositories;
 
@@ -11,6 +12,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ObraRepository>();
 builder.Services.AddScoped<TareaRepository>();
 builder.Services.AddScoped<UnitOfWork>();
+builder.Services.AddScoped<ObraService>();
+builder.Services.AddScoped<TareaService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="SeguimientoConstruccion.API/SeguimientoConstruccion.API.csproj" />
+  <Project Path="SeguimientoConstruccion.Application/SeguimientoConstruccion.Application.csproj" Id="c4d1071e-10e4-488b-a460-2f9727fa621f" />
   <Project Path="SeguimientoConstruccion.Domain/SeguimientoConstruccion.Domain.csproj" Id="6092b7e1-b39d-4dd2-8ef6-9372444ae560" />
   <Project Path="SeguimientoConstruccion.Infrastructure/SeguimientoConstruccion.Infrastructure.csproj" Id="ff1073eb-54c8-433f-93a9-86cfca3b4cbd" />
 </Solution>

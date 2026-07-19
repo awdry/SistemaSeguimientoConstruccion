@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SeguimientoConstruccion.Application\SeguimientoConstruccion.Application.csproj" />
     <ProjectReference Include="..\SeguimientoConstruccion.Infrastructure\SeguimientoConstruccion.Infrastructure.csproj" />
   </ItemGroup>
 

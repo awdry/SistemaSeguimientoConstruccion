@@ -1,102 +1,58 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SeguimientoConstruccion.API.DTOs;
-using SeguimientoConstruccion.Domain.Entities;
-using SeguimientoConstruccion.Infrastructure.Context;
+using SeguimientoConstruccion.Application.Common;
+using SeguimientoConstruccion.Application.DTOs;
+using SeguimientoConstruccion.Application.Services;
 
 namespace SeguimientoConstruccion.API.Controllers
 {
-    [ApiController]
+[ApiController]
     [Route("api/[controller]")]
     public class ObrasController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly ObraService _obraService;
 
-        public ObrasController(AppDbContext context)
+        public ObrasController(ObraService obraService)
         {
-            _context = context;
+            _obraService = obraService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ObraDto>>> GetObras()
+        public ActionResult<APIResponse<IEnumerable<ObraDTO>>> GetObras()
         {
-            var obras = await _context.Obras
-                .Select(o => new ObraDto
-                {
-                    Id = o.Id,
-                    Nombre = o.Nombre,
-                    Ubicacion = o.Ubicacion,
-                    FechaInicio = o.FechaInicio,
-                    FechaFinEstimada = o.FechaFinEstimada,
-                    Estado = o.Estado
-                })
-                .ToListAsync();
-            return Ok(obras);
+            var response = _obraService.GetAllObras();
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ObraDto>> GetObra(int id)
+        public ActionResult<APIResponse<ObraDTO>> GetObra(int id)
         {
-            var obra = await _context.Obras.FindAsync(id);
-            if (obra == null) return NotFound();
-
-            return Ok(new ObraDto
-            {
-                Id = obra.Id,
-                Nombre = obra.Nombre,
-                Ubicacion = obra.Ubicacion,
-                FechaInicio = obra.FechaInicio,
-                FechaFinEstimada = obra.FechaFinEstimada,
-                Estado = obra.Estado
-            });
-
+            var response = _obraService.GetObraById(id);
+            if (!response.Success) return NotFound(response);
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ObraDto>> PostObra(ObraDto dto)
+        public ActionResult<APIResponse<int>> PostObra(ObraDTO dto)
         {
-            var obra = new Obra
-            {
-                Nombre = dto.Nombre,
-                Ubicacion = dto.Ubicacion,
-                FechaInicio = dto.FechaInicio,
-                FechaFinEstimada = dto.FechaFinEstimada,
-                Estado = dto.Estado
-            };
-
-            _context.Obras.Add(obra);
-            await _context.SaveChangesAsync();
-
-            dto.Id = obra.Id;
-            return CreatedAtAction(nameof(GetObra), new { id = obra.Id }, dto);
+            var response = _obraService.CreateObra(dto);
+            if (!response.Success) return BadRequest(response);
+            return StatusCode(201, response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutObra(int id, ObraDto dto)
+        public ActionResult<APIResponse<bool>> PutObra(int id, ObraDTO dto)
         {
-            var obra = await _context.Obras.FindAsync(id);
-            if (obra == null) return NotFound();
-
-            obra.Nombre = dto.Nombre;
-            obra.Ubicacion = dto.Ubicacion;
-            obra.FechaInicio = dto.FechaInicio;
-            obra.FechaFinEstimada = dto.FechaFinEstimada;
-            obra.Estado = dto.Estado;
-
-            await _context.SaveChangesAsync();
-            return NoContent();
+            var response = _obraService.UpdateObra(id, dto);
+            if (!response.Success) return BadRequest(response);
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteObra(int id)
+        public ActionResult<APIResponse<bool>> DeleteObra(int id)
         {
-            var obra = await _context.Obras.FindAsync(id);
-            if (obra == null) return NotFound();
-
-            _context.Obras.Remove(obra);
-            await _context.SaveChangesAsync();
-            return NoContent();
+            var response = _obraService.DeleteObra(id);
+            if (!response.Success) return BadRequest(response);
+            return Ok(response);
         }
-
     }
 }
