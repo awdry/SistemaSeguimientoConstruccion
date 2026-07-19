@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SeguimientoConstruccion.API.DTOs;
-using SeguimientoConstruccion.Domain.Entities;
-using SeguimientoConstruccion.Infrastructure.Context;
+using SeguimientoConstruccion.Application.Common;
+using SeguimientoConstruccion.Application.DTOs;
+using SeguimientoConstruccion.Application.Services;
 
 namespace SeguimientoConstruccion.API.Controllers
 {
@@ -10,96 +9,50 @@ namespace SeguimientoConstruccion.API.Controllers
     [Route("api/[controller]")]
     public class TareasController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly TareaService _tareaService;
 
-        public TareasController(AppDbContext context)
+        public TareasController(TareaService tareaService)
         {
-            _context = context;
+            _tareaService = tareaService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TareaDto>>> GetTareas()
+        public ActionResult<APIResponse<IEnumerable<TareaDTO>>> GetTareas()
         {
-            var tareas = await _context.Tareas
-                .Select(t => new TareaDto
-                {
-                    Id = t.Id,
-                    Descripcion = t.Descripcion,
-                    FechaInicio = t.FechaInicio,
-                    FechaFin = t.FechaFin,
-                    PorcentajeAvance = t.PorcentajeAvance,
-                    ObraId = t.ObraId,
-                    ResponsableId = t.ResponsableId
-                })
-                .ToListAsync();
-
-            return Ok(tareas);
+            var response = _tareaService.GetAllTareas();
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TareaDto>> GetTarea(int id)
+        public ActionResult<APIResponse<TareaDTO>> GetTarea(int id)
         {
-            var tarea = await _context.Tareas.FindAsync(id);
-            if (tarea == null) return NotFound();
-
-            return Ok(new TareaDto
-            {
-                Id = tarea.Id,
-                Descripcion = tarea.Descripcion,
-                FechaInicio = tarea.FechaInicio,
-                FechaFin = tarea.FechaFin,
-                PorcentajeAvance = tarea.PorcentajeAvance,
-                ObraId = tarea.ObraId,
-                ResponsableId = tarea.ResponsableId
-            });
+            var response = _tareaService.GetTareaById(id);
+            if (!response.Success) return NotFound(response);
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ActionResult<TareaDto>> PostTarea(TareaDto dto)
+        public ActionResult<APIResponse<int>> PostTarea(TareaDTO dto)
         {
-            var tarea = new Tarea
-            {
-                Descripcion = dto.Descripcion,
-                FechaInicio = dto.FechaInicio,
-                FechaFin = dto.FechaFin,
-                PorcentajeAvance = dto.PorcentajeAvance,
-                ObraId = dto.ObraId,
-                ResponsableId = dto.ResponsableId
-            };
-
-            _context.Tareas.Add(tarea);
-            await _context.SaveChangesAsync();
-
-            dto.Id = tarea.Id;
-            return CreatedAtAction(nameof(GetTarea), new { id = tarea.Id }, dto);
+            var response = _tareaService.CreateTarea(dto);
+            if (!response.Success) return BadRequest(response);
+            return StatusCode(201, response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTarea(int id, TareaDto dto)
+        public ActionResult<APIResponse<bool>> PutTarea(int id, TareaDTO dto)
         {
-            var tarea = await _context.Tareas.FindAsync(id);
-            if (tarea == null) return NotFound();
-
-            tarea.Descripcion = dto.Descripcion;
-            tarea.FechaInicio = dto.FechaInicio;
-            tarea.FechaFin = dto.FechaFin;
-            tarea.PorcentajeAvance = dto.PorcentajeAvance;
-            tarea.ObraId = dto.ObraId;
-            tarea.ResponsableId = dto.ResponsableId;
-
-            await _context.SaveChangesAsync();
-            return NoContent();
+            var response = _tareaService.UpdateTarea(id, dto);
+            if (!response.Success) return BadRequest(response);
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTarea(int id)
+        public ActionResult<APIResponse<bool>> DeleteTarea(int id)
         {
-            var tarea = await _context.Tareas.FindAsync(id);
-            if (tarea == null) return NotFound();
-
-            _context.Tareas.Remove(tarea);
-            await _context.SaveChangesAsync();
-            return NoContent();
+            var response = _tareaService.DeleteTarea(id);
+            if (!response.Success) return BadRequest(response);
+            return Ok(response);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace SeguimientoConstruccion.API.DTOs
+﻿namespace SeguimientoConstruccion.Application.DTOs
 {
-    public class TareaDto
+    public class TareaDTO
     {
         public int Id { get; set; }
         public string Descripcion { get; set; } = string.Empty;

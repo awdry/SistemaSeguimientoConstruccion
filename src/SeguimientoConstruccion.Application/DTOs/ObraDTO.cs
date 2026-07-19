@@ -1,6 +1,6 @@
-﻿namespace SeguimientoConstruccion.API.DTOs
+﻿namespace SeguimientoConstruccion.Application.DTOs
 {
-    public class ObraDto
+    public class ObraDTO
     {
      public int Id { get; set; }
      public string Nombre { get; set; } = string.Empty;
