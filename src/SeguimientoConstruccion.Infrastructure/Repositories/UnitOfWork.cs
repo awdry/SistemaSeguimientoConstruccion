@@ -11,12 +11,14 @@ namespace SeguimientoConstruccion.Infrastructure.Repositories
 
         public ObraRepository Obra { get;  set; }
         public TareaRepository Tarea { get; set; }
+        public ResponsableRepository Responsable { get; set; }
 
-        public UnitOfWork(AppDbContext context, ObraRepository obra, TareaRepository tarea)
+        public UnitOfWork(AppDbContext context, ObraRepository obra, TareaRepository tarea, ResponsableRepository responsable)
         {
             _context = context;
             Obra = obra;
             Tarea = tarea;
+            Responsable = responsable;
         }
 
        public void Complete()

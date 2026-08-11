@@ -13,7 +13,7 @@ namespace SeguimientoConstruccion.Domain.Entities
 
         public List<Material> Materiales { get; set; } = new List<Material>();
 
-        public int ResponsableId { get; set; }
+        public int? ResponsableId { get; set; }
         public Responsable? Responsable { get; set; }
     }
 }
