@@ -100,7 +100,12 @@ export default function Dashboard() {
                     <span style={{fontSize:'0.8rem'}}>{t.porcentajeAvance}%</span>
                   </div>
                 </td>
-                <td>{new Date(t.fechaFin).toLocaleDateString()}</td>
+                <td>
+                  {t.fechaFin
+                    ? <span className="badge badge-success">{new Date(t.fechaFin).toLocaleDateString()}</span>
+                    : <span className="badge badge-info">Pendiente</span>
+                  }
+                </td>
               </tr>
             ))}
             {tareas.length === 0 && (

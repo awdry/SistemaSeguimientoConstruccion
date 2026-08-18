@@ -67,7 +67,7 @@ namespace SeguimientoConstruccion.Application.Services
             {
                 Descripcion = dto.Descripcion,
                 FechaInicio = dto.FechaInicio,
-                FechaFin = dto.FechaFin,
+                FechaFin = dto.PorcentajeAvance == 100 ? DateTime.Now : null,
                 PorcentajeAvance = dto.PorcentajeAvance,
                 ObraId = dto.ObraId,
                 ResponsableId = dto.ResponsableId
@@ -98,6 +98,12 @@ namespace SeguimientoConstruccion.Application.Services
             tarea.PorcentajeAvance = dto.PorcentajeAvance;
             tarea.ObraId = dto.ObraId;
             tarea.ResponsableId = dto.ResponsableId;
+
+            if (dto.PorcentajeAvance == 100 && tarea.FechaFin == null)
+                tarea.FechaFin = DateTime.Now;
+
+            if (dto.PorcentajeAvance < 100)
+                tarea.FechaFin = null;
 
             _unitOfWork.Complete();
             return APIResponse<bool>.SuccessResponse(true);
