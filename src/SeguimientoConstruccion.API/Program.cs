@@ -11,11 +11,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add services to the container.
 builder.Services.AddScoped<ObraRepository>();
 builder.Services.AddScoped<TareaRepository>();
+builder.Services.AddScoped<ResponsableRepository>();
+builder.Services.AddScoped<MaterialRepository>();
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<ObraService>();
 builder.Services.AddScoped<TareaService>();
-builder.Services.AddScoped<ResponsableRepository>();
 builder.Services.AddScoped<ResponsableService>();
+builder.Services.AddScoped<MaterialService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -4,8 +4,10 @@ import Dashboard from './pages/Dashboard';
 import Obras from './pages/Obras';
 import Tareas from './pages/Tareas';
 import Responsables from './pages/Responsables';
+import Materiales from './pages/Materiales';
 import Navbar from './components/Navbar';
 import './App.css';
+
 
 function PrivateRoute({ children }) {
   const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
@@ -47,6 +49,13 @@ export default function App() {
         <Layout><Responsables /></Layout>
         </PrivateRoute>
         } />
+
+        <Route path="/materiales" element={
+        <PrivateRoute>
+        <Layout><Materiales /></Layout>
+        </PrivateRoute>
+        } />
+        
       </Routes>
     </BrowserRouter>
   );

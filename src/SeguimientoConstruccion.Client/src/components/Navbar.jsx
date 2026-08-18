@@ -16,6 +16,7 @@ export default function Navbar() {
         <Link to="/obras">Obras</Link>
         <Link to="/tareas">Tareas</Link>
         <Link to="/responsables">Responsables</Link>
+        <Link to="/materiales">Materiales</Link>
       </nav>
       <button className="logout-btn" onClick={logout}>Cerrar sesión</button>
     </div>
