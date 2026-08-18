@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import api from '../api';
 
-const empty = { descripcion: '', fechaInicio: '', fechaFin: '', porcentajeAvance: 0, obraId: '', responsableId: '' };
+const empty = { descripcion: '', fechaInicio: '', porcentajeAvance: 0, obraId: '', responsableId: '' };
 
 export default function Tareas() {
   const [tareas, setTareas] = useState([]);
@@ -35,7 +35,6 @@ export default function Tareas() {
     setForm({
       descripcion: t.descripcion,
       fechaInicio: t.fechaInicio?.split('T')[0] || '',
-      fechaFin: t.fechaFin?.split('T')[0] || '',
       porcentajeAvance: t.porcentajeAvance,
       obraId: t.obraId,
       responsableId: t.responsableId || ''
@@ -52,11 +51,10 @@ export default function Tareas() {
       porcentajeAvance: parseFloat(form.porcentajeAvance),
       responsableId: form.responsableId ? parseInt(form.responsableId) : null,
       fechaInicio: new Date(form.fechaInicio).toISOString(),
-      fechaFin: new Date(form.fechaFin).toISOString()
     };
     if (editId) {
       await api.put(`/Tareas/${editId}`, { id: editId, ...payload });
-      showToast('Tarea actualizada correctamente');
+      showToast(parseFloat(form.porcentajeAvance) === 100 ? 'Tarea completada — Fecha Fin registrada' : 'Tarea actualizada correctamente');
     } else {
       await api.post('/Tareas', { id: 0, ...payload });
       showToast('Tarea creada correctamente');
@@ -88,7 +86,7 @@ export default function Tareas() {
       'Responsable': responsableNombre(t.responsableId),
       'Avance (%)': t.porcentajeAvance,
       'Fecha Inicio': new Date(t.fechaInicio).toLocaleDateString(),
-      'Fecha Fin': new Date(t.fechaFin).toLocaleDateString()
+      'Fecha Fin': t.fechaFin ? new Date(t.fechaFin).toLocaleDateString() : 'Pendiente'
     }));
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -144,7 +142,12 @@ export default function Tareas() {
                   </div>
                 </td>
                 <td>{new Date(t.fechaInicio).toLocaleDateString()}</td>
-                <td>{new Date(t.fechaFin).toLocaleDateString()}</td>
+                <td>
+                  {t.fechaFin
+                    ? <span className="badge badge-success">{new Date(t.fechaFin).toLocaleDateString()}</span>
+                    : <span className="badge badge-info">Pendiente</span>
+                  }
+                </td>
                 <td>
                   <button className="btn btn-warning" style={{ marginRight: '0.5rem' }} onClick={() => openEdit(t)}>Editar</button>
                   <button className="btn btn-danger" onClick={() => handleDelete(t.id)}>Eliminar</button>
@@ -189,10 +192,11 @@ export default function Tareas() {
                 <label>Fecha Inicio</label>
                 <input type="date" required value={form.fechaInicio} onChange={e => setForm({ ...form, fechaInicio: e.target.value })} />
               </div>
-              <div className="form-group">
-                <label>Fecha Fin</label>
-                <input type="date" required value={form.fechaFin} onChange={e => setForm({ ...form, fechaFin: e.target.value })} />
-              </div>
+              {parseFloat(form.porcentajeAvance) === 100 && (
+                <div style={{ background: '#d4edda', borderRadius: '6px', padding: '0.6rem 0.8rem', marginBottom: '1rem', fontSize: '0.9rem', color: '#155724' }}>
+                   La Fecha Fin se registrará automáticamente con la fecha de hoy.
+                </div>
+              )}
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setModal(false)}>Cancelar</button>
                 <button type="submit" className="btn btn-primary">{editId ? 'Guardar' : 'Crear'}</button>
