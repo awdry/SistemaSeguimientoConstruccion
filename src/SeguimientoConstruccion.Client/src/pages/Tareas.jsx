@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
 import api from '../api';
 
 const empty = { descripcion: '', fechaInicio: '', fechaFin: '', porcentajeAvance: 0, obraId: '', responsableId: '' };
@@ -10,6 +11,12 @@ export default function Tareas() {
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState(empty);
   const [editId, setEditId] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  function showToast(msg, type = 'success') {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  }
 
   useEffect(() => {
     load();
@@ -49,16 +56,19 @@ export default function Tareas() {
     };
     if (editId) {
       await api.put(`/Tareas/${editId}`, { id: editId, ...payload });
+      showToast('Tarea actualizada correctamente');
     } else {
       await api.post('/Tareas', { id: 0, ...payload });
+      showToast('Tarea creada correctamente');
     }
     setModal(false);
     load();
   }
 
   async function handleDelete(id) {
-    if (confirm('¿Eliminar esta tarea?')) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.')) {
       await api.delete(`/Tareas/${id}`);
+      showToast('Tarea eliminada', 'error');
       load();
     }
   }
@@ -71,11 +81,39 @@ export default function Tareas() {
     return responsables.find(r => r.id === id)?.nombre || '-';
   }
 
+  function exportarExcel() {
+    const data = tareas.map(t => ({
+      'Descripción': t.descripcion,
+      'Obra': obraNombre(t.obraId),
+      'Responsable': responsableNombre(t.responsableId),
+      'Avance (%)': t.porcentajeAvance,
+      'Fecha Inicio': new Date(t.fechaInicio).toLocaleDateString(),
+      'Fecha Fin': new Date(t.fechaFin).toLocaleDateString()
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Tareas');
+    XLSX.writeFile(wb, 'Tareas_SistemaConstruccion.xlsx');
+    showToast('Archivo Excel exportado correctamente');
+  }
+
   return (
     <>
+      {toast && (
+        <div style={{
+          position: 'fixed', top: '1rem', right: '1rem', zIndex: 9999,
+          background: toast.type === 'error' ? '#e74c3c' : '#27ae60',
+          color: 'white', padding: '0.75rem 1.5rem', borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.2)', fontSize: '0.9rem', fontWeight: 500
+        }}>{toast.msg}</div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h1 className="page-title" style={{ margin: 0 }}>Tareas</h1>
-        <button className="btn btn-primary" onClick={openCreate}>+ Nueva Tarea</button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button className="btn btn-success" onClick={exportarExcel}>⬇ Exportar Excel</button>
+          <button className="btn btn-primary" onClick={openCreate}>+ Nueva Tarea</button>
+        </div>
       </div>
 
       <div className="card">
@@ -100,7 +138,7 @@ export default function Tareas() {
                 <td>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <div style={{ background: '#eee', borderRadius: '10px', height: '8px', width: '80px' }}>
-                      <div style={{ background: '#27ae60', height: '8px', borderRadius: '10px', width: `${t.porcentajeAvance}%` }} />
+                      <div style={{ background: t.porcentajeAvance === 100 ? '#27ae60' : '#f39c12', height: '8px', borderRadius: '10px', width: `${t.porcentajeAvance}%` }} />
                     </div>
                     <span style={{ fontSize: '0.8rem' }}>{t.porcentajeAvance}%</span>
                   </div>

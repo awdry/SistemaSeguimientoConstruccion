@@ -24,7 +24,8 @@ namespace SeguimientoConstruccion.Application.Services
             {
                 Id = o.Id,
                 Nombre = o.Nombre,
-                Ubicacion = o.Ubicacion,
+                Provincia = o.Provincia,
+                Direccion = o.Direccion,
                 FechaInicio = o.FechaInicio,
                 FechaFinEstimada = o.FechaFinEstimada,
                 Estado = o.Estado
@@ -42,7 +43,8 @@ namespace SeguimientoConstruccion.Application.Services
                 {
                     Id = obra.Id,
                     Nombre = obra.Nombre,
-                    Ubicacion = obra.Ubicacion,
+                    Provincia = obra.Provincia,
+                    Direccion = obra.Direccion,
                     FechaInicio = obra.FechaInicio,
                     FechaFinEstimada = obra.FechaFinEstimada,
                     Estado = obra.Estado
@@ -54,8 +56,8 @@ namespace SeguimientoConstruccion.Application.Services
             if (string.IsNullOrEmpty(dto.Nombre))
                 return APIResponse<int>.ErrorResponse("El nombre es requerido");
 
-            if (string.IsNullOrEmpty(dto.Ubicacion))
-                return APIResponse<int>.ErrorResponse("La ubicación es requerida");
+            if (string.IsNullOrEmpty(dto.Provincia))
+                return APIResponse<int>.ErrorResponse("La provincia es requerida");
 
             if (string.IsNullOrEmpty(dto.Estado))
                 return APIResponse<int>.ErrorResponse("El estado es requerido");
@@ -63,7 +65,8 @@ namespace SeguimientoConstruccion.Application.Services
             var obra = new Obra
             {
                 Nombre = dto.Nombre,
-                Ubicacion = dto.Ubicacion,
+                Provincia = dto.Provincia,
+                Direccion = dto.Direccion,
                 FechaInicio = dto.FechaInicio,
                 FechaFinEstimada = dto.FechaFinEstimada,
                 Estado = dto.Estado
@@ -85,7 +88,8 @@ namespace SeguimientoConstruccion.Application.Services
                 return APIResponse<bool>.ErrorResponse("El nombre es requerido");
 
             obra.Nombre = dto.Nombre;
-            obra.Ubicacion = dto.Ubicacion;
+            obra.Provincia = dto.Provincia;
+            obra.Direccion = dto.Direccion;
             obra.FechaInicio = dto.FechaInicio;
             obra.FechaFinEstimada = dto.FechaFinEstimada;
             obra.Estado = dto.Estado;
