@@ -8,6 +8,12 @@ export default function Responsables() {
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState(empty);
   const [editId, setEditId] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  function showToast(msg, type = 'success') {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  }
 
   useEffect(() => { load(); }, []);
 
@@ -28,22 +34,34 @@ export default function Responsables() {
     e.preventDefault();
     if (editId) {
       await api.put(`/Responsables/${editId}`, { id: editId, ...form });
+      showToast('Responsable actualizado correctamente');
     } else {
       await api.post('/Responsables', { id: 0, ...form });
+      showToast('Responsable creado correctamente');
     }
     setModal(false);
     load();
   }
 
   async function handleDelete(id) {
-    if (confirm('¿Eliminar este responsable?')) {
+    if (confirm('¿Estás seguro de que deseas eliminar este responsable? Esta acción no se puede deshacer.')) {
       await api.delete(`/Responsables/${id}`);
+      showToast('Responsable eliminado', 'error');
       load();
     }
   }
 
   return (
     <>
+      {toast && (
+        <div style={{
+          position: 'fixed', top: '1rem', right: '1rem', zIndex: 9999,
+          background: toast.type === 'error' ? '#e74c3c' : '#27ae60',
+          color: 'white', padding: '0.75rem 1.5rem', borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.2)', fontSize: '0.9rem', fontWeight: 500
+        }}>{toast.msg}</div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h1 className="page-title" style={{ margin: 0 }}>Responsables</h1>
         <button className="btn btn-primary" onClick={openCreate}>+ Nuevo Responsable</button>

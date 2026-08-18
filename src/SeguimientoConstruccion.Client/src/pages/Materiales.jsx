@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
 import api from '../api';
 
 const empty = { nombre: '', unidadMedida: '', costoUnitario: 0, cantidadUsada: 0, tareaId: '' };
@@ -11,15 +12,15 @@ export default function Materiales() {
   const [editId, setEditId] = useState(null);
   const [toast, setToast] = useState(null);
 
-  useEffect(() => {
-    load();
-    api.get('/Tareas').then(r => setTareas(r.data.data || []));
-  }, []);
-
   function showToast(msg, type = 'success') {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 3000);
   }
+
+  useEffect(() => {
+    load();
+    api.get('/Tareas').then(r => setTareas(r.data.data || []));
+  }, []);
 
   async function load() {
     const r = await api.get('/Materiales');
@@ -72,6 +73,22 @@ export default function Materiales() {
     return tareas.find(t => t.id === id)?.descripcion || `Tarea #${id}`;
   }
 
+  function exportarExcel() {
+    const data = materiales.map(m => ({
+      'Nombre': m.nombre,
+      'Unidad': m.unidadMedida,
+      'Costo Unitario': m.costoUnitario,
+      'Cantidad': m.cantidadUsada,
+      'Costo Total': m.costoTotal,
+      'Tarea': tareaNombre(m.tareaId)
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Materiales');
+    XLSX.writeFile(wb, 'Materiales_SistemaConstruccion.xlsx');
+    showToast('Archivo Excel exportado correctamente');
+  }
+
   const costoTotal = materiales.reduce((sum, m) => sum + (m.costoTotal || 0), 0);
 
   return (
@@ -82,18 +99,19 @@ export default function Materiales() {
           background: toast.type === 'error' ? '#e74c3c' : '#27ae60',
           color: 'white', padding: '0.75rem 1.5rem', borderRadius: '8px',
           boxShadow: '0 4px 12px rgba(0,0,0,0.2)', fontSize: '0.9rem', fontWeight: 500
-        }}>
-          {toast.msg}
-        </div>
+        }}>{toast.msg}</div>
       )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h1 className="page-title" style={{ margin: 0 }}>Materiales</h1>
-        <button className="btn btn-primary" onClick={openCreate}>+ Nuevo Material</button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button className="btn btn-success" onClick={exportarExcel}>⬇ Exportar Excel</button>
+          <button className="btn btn-primary" onClick={openCreate}>+ Nuevo Material</button>
+        </div>
       </div>
 
       <div style={{ background: 'white', borderRadius: '10px', padding: '1rem 1.5rem', marginBottom: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ color: '#030101', fontSize: '0.95rem' }}> Costo total en materiales</span>
+        <span style={{ color: '#060606', fontSize: '0.95rem' }}> Costo total en materiales</span>
         <span style={{ fontWeight: 700, fontSize: '1.3rem', color: '#1a1a2e' }}>
           RD$ {costoTotal.toLocaleString('es-DO', { minimumFractionDigits: 2 })}
         </span>
@@ -161,15 +179,13 @@ export default function Materiales() {
               </div>
               <div className="form-group">
                 <label>Costo Unitario (RD$)</label>
-                <input type="number" min="0" step="0.01" required value={form.costoUnitario}
-                  onChange={e => setForm({ ...form, costoUnitario: e.target.value })} />
+                <input type="number" min="0" step="0.01" required value={form.costoUnitario} onChange={e => setForm({ ...form, costoUnitario: e.target.value })} />
               </div>
               <div className="form-group">
                 <label>Cantidad Usada</label>
-                <input type="number" min="0" step="0.01" required value={form.cantidadUsada}
-                  onChange={e => setForm({ ...form, cantidadUsada: e.target.value })} />
+                <input type="number" min="0" step="0.01" required value={form.cantidadUsada} onChange={e => setForm({ ...form, cantidadUsada: e.target.value })} />
               </div>
-              <div style={{ background: '#f0f4f8', borderRadius: '6px', padding: '0.6rem 0.8rem', marginBottom: '1rem', fontSize: '0.9rem', color: '#1a1a2e' }}>
+              <div style={{ background: '#04040429', borderRadius: '6px', padding: '0.6rem 0.8rem', marginBottom: '1rem', fontSize: '0.9rem', color: '#024611' }}>
                  Costo total estimado: <strong>RD$ {(parseFloat(form.costoUnitario || 0) * parseFloat(form.cantidadUsada || 0)).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</strong>
               </div>
               <div className="form-group">
